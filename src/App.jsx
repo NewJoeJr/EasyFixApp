@@ -267,6 +267,7 @@ export default function App() {
 
   useEffect(() => { localStorage.setItem("sg_size", sizeIdx); }, [sizeIdx]);
   useEffect(() => { localStorage.setItem("sg_dark", dark ? "1" : "0"); }, [dark]);
+  useEffect(() => { setDark(pendingDark); }, [pendingDark]);
 
   function confirmSize() {
     setSizeIdx(pendingSizeIdx);
@@ -322,24 +323,27 @@ export default function App() {
           }
 
           {/* First-launch Size Picker Modal */}
-          {showSizePicker && (
+          {showSizePicker && (() => {
+            const MC = pendingDark ? DARK : LIGHT;
+            const MP = SIZE_PRESETS[pendingSizeIdx];
+            return (
             <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.65)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-              <div style={{ background: C.surface, borderRadius: 18, padding: 28, maxWidth: 340, width: "100%" }}>
-                <h2 style={{ margin: "0 0 6px", fontSize: SIZE_PRESETS[pendingSizeIdx].heading, color: C.blue, fontWeight: 800 }}>
+              <div style={{ background: MC.surface, borderRadius: 18, padding: 28, maxWidth: 340, width: "100%" }}>
+                <h2 style={{ margin: "0 0 6px", fontSize: MP.heading, color: MC.blue, fontWeight: 800 }}>
                   Welcome to EasyFix
                 </h2>
-                <p style={{ fontSize: SIZE_PRESETS[pendingSizeIdx].base, color: C.textMid, marginBottom: 20, lineHeight: 1.5 }}>
+                <p style={{ fontSize: MP.base, color: MC.textMid, marginBottom: 20, lineHeight: 1.5 }}>
                   Set things up the way you like before we get started.
                 </p>
 
                 {/* Dark mode toggle */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.bg, borderRadius: 12, padding: "14px 16px", marginBottom: 20 }}>
-                  <span style={{ fontSize: SIZE_PRESETS[pendingSizeIdx].base, color: C.text, fontWeight: 600 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: MC.bg, borderRadius: 12, padding: "14px 16px", marginBottom: 20 }}>
+                  <span style={{ fontSize: MP.base, color: MC.text, fontWeight: 600 }}>
                     {pendingDark ? "🌙 Dark Mode" : "☀️ Light Mode"}
                   </span>
                   <button onClick={() => setPendingDark(d => !d)} style={{
                     width: 52, height: 30, borderRadius: 15, border: "none",
-                    background: pendingDark ? C.blue : C.border,
+                    background: pendingDark ? MC.blue : MC.border,
                     position: "relative", cursor: "pointer", flexShrink: 0,
                   }}>
                     <span style={{
@@ -352,16 +356,16 @@ export default function App() {
                   </button>
                 </div>
 
-                <p style={{ fontSize: SIZE_PRESETS[pendingSizeIdx].base - 2, color: C.muted, marginBottom: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <p style={{ fontSize: MP.base - 2, color: MC.muted, marginBottom: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Text Size
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
                   {SIZE_PRESETS.map((p, i) => (
                     <button key={i} onClick={() => setPendingSizeIdx(i)} style={{
                       padding: "14px 16px", borderRadius: 12,
-                      border: `2px solid ${pendingSizeIdx === i ? C.blue : C.border}`,
-                      background: pendingSizeIdx === i ? C.blueFaint : C.surface,
-                      color: pendingSizeIdx === i ? C.blue : C.text,
+                      border: `2px solid ${pendingSizeIdx === i ? MC.blue : MC.border}`,
+                      background: pendingSizeIdx === i ? MC.blueFaint : MC.surface,
+                      color: pendingSizeIdx === i ? MC.blue : MC.text,
                       fontSize: p.base, fontWeight: pendingSizeIdx === i ? 700 : 400,
                       cursor: "pointer", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center",
                     }}>
@@ -371,15 +375,16 @@ export default function App() {
                   ))}
                 </div>
                 <button onClick={confirmSize} style={{
-                  width: "100%", padding: "14px", background: C.blue, color: "#fff",
+                  width: "100%", padding: "14px", background: MC.blue, color: "#fff",
                   border: "none", borderRadius: 12,
-                  fontSize: SIZE_PRESETS[pendingSizeIdx].base, fontWeight: 700, cursor: "pointer",
+                  fontSize: MP.base, fontWeight: 700, cursor: "pointer",
                 }}>
                   Looks good — let's go!
                 </button>
               </div>
             </div>
-          )}
+            );
+          })()}
 
           {/* Install Modal */}
           {showInstallModal && (
