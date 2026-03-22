@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const SIZE_PRESETS = [
-  { label: "Small",   base: 13, heading: 18, title: 20, radius: 10 },
-  { label: "Normal",  base: 16, heading: 21, title: 24, radius: 12 },
-  { label: "Large",   base: 19, heading: 25, title: 28, radius: 14 },
-  { label: "X-Large", base: 23, heading: 30, title: 33, radius: 16 },
+  { label: "Small",   base: 13, heading: 17, title: 19, radius: 10 },
+  { label: "Normal",  base: 15, heading: 20, title: 22, radius: 12 },
+  { label: "Large",   base: 17, heading: 22, title: 24, radius: 14 },
+  { label: "X-Large", base: 20, heading: 25, title: 27, radius: 16 },
 ];
 
 const LIGHT = {
@@ -104,36 +104,37 @@ function HelpTab() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 110px)" }}>
+    <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
       {/* Topic bar */}
-      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "14px 16px" }}>
+      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "12px 14px", flexShrink: 0 }}>
         {!activeCategory ? (
           <>
-            <p style={{ fontSize: sz.base - 2, color: C.muted, marginBottom: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <p style={{ fontSize: sz.base - 2, color: C.muted, marginBottom: 8, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
               Choose a topic
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
               {CATEGORIES.map(cat => (
                 <button key={cat.label} onClick={() => selectCategory(cat)} style={{
                   background: C.blueFaint, border: `1px solid ${C.blueLight}`,
-                  borderRadius: sz.radius, padding: "10px 12px",
-                  fontSize: sz.base - 2, fontWeight: 600, color: C.blue,
-                  cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 7,
+                  borderRadius: sz.radius, padding: "8px 10px",
+                  fontSize: Math.min(sz.base - 1, 15), fontWeight: 600, color: C.blue,
+                  cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center",
+                  gap: 6, lineHeight: 1.3, minWidth: 0, overflow: "hidden",
                 }}>
-                  <span style={{ fontSize: sz.base + 2 }}>{cat.emoji}</span>
-                  {cat.label}
+                  <span style={{ fontSize: Math.min(sz.base + 1, 18), flexShrink: 0 }}>{cat.emoji}</span>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat.label}</span>
                 </button>
               ))}
             </div>
           </>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: sz.base + 2 }}>{activeCategory.emoji}</span>
-            <span style={{ fontSize: sz.base, fontWeight: 700, color: C.text }}>{activeCategory.label}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <span style={{ fontSize: sz.base + 1, flexShrink: 0 }}>{activeCategory.emoji}</span>
+            <span style={{ fontSize: sz.base, fontWeight: 700, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{activeCategory.label}</span>
             <button onClick={() => { setActiveCategory(null); setMessages([]); }} style={{
-              marginLeft: "auto", fontSize: sz.base - 3,
+              flexShrink: 0, fontSize: Math.min(sz.base - 2, 13),
               background: C.blueLight, color: C.blue,
-              border: "none", borderRadius: 20, padding: "5px 12px", fontWeight: 700, cursor: "pointer",
+              border: "none", borderRadius: 20, padding: "5px 11px", fontWeight: 700, cursor: "pointer",
             }}>
               Change Topic
             </button>
@@ -142,10 +143,10 @@ function HelpTab() {
       </div>
 
       {/* Chat area */}
-      <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", background: C.bg }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "12px 14px", display: "flex", flexDirection: "column", background: C.bg, minHeight: 0 }}>
         {messages.length === 0 && !loading && (
-          <div style={{ textAlign: "center", paddingTop: 60, color: C.muted }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🛠️</div>
+          <div style={{ textAlign: "center", paddingTop: 40, color: C.muted }}>
+            <div style={{ fontSize: 44, marginBottom: 10 }}>🛠️</div>
             <div style={{ fontSize: sz.heading, fontWeight: 700, color: C.textMid, marginBottom: 6 }}>Welcome to EasyFix</div>
             <div style={{ fontSize: sz.base - 1 }}>Select a topic above or type your question below.</div>
           </div>
@@ -155,9 +156,10 @@ function HelpTab() {
             background: m.role === "user" ? C.userBubble : C.botBubble,
             color: m.role === "user" ? C.userText : C.botText,
             border: m.role === "bot" ? `1px solid ${C.border}` : "none",
-            padding: "12px 16px", borderRadius: sz.radius + 4, marginBottom: 10,
-            maxWidth: "86%", alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+            padding: "10px 14px", borderRadius: sz.radius + 4, marginBottom: 8,
+            maxWidth: "88%", alignSelf: m.role === "user" ? "flex-end" : "flex-start",
             fontSize: sz.base, lineHeight: 1.55, boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+            wordBreak: "break-word",
           }}>
             {m.text}
           </div>
@@ -165,7 +167,7 @@ function HelpTab() {
         {loading && (
           <div style={{
             background: C.botBubble, border: `1px solid ${C.border}`,
-            padding: "12px 16px", borderRadius: sz.radius + 4,
+            padding: "10px 14px", borderRadius: sz.radius + 4,
             alignSelf: "flex-start", fontSize: sz.base, color: C.muted,
           }}>
             Thinking…
@@ -175,10 +177,10 @@ function HelpTab() {
       </div>
 
       {/* Input bar */}
-      <div style={{ display: "flex", gap: 8, padding: "10px 14px 16px", background: C.surface, borderTop: `1px solid ${C.border}` }}>
+      <div style={{ display: "flex", gap: 8, padding: "8px 12px 12px", background: C.surface, borderTop: `1px solid ${C.border}`, flexShrink: 0 }}>
         <input
           style={{
-            flex: 1, padding: "13px 14px", borderRadius: sz.radius,
+            flex: 1, minWidth: 0, padding: "11px 12px", borderRadius: sz.radius,
             border: `1.5px solid ${C.border}`, fontSize: sz.base,
             outline: "none", color: C.text, background: C.inputBg,
           }}
@@ -188,8 +190,8 @@ function HelpTab() {
           onKeyDown={e => e.key === "Enter" && sendMessage(input)}
         />
         <button onClick={() => sendMessage(input)} disabled={!input.trim() || loading} style={{
-          background: C.blue, color: "#fff", border: "none",
-          borderRadius: sz.radius, padding: "0 20px",
+          flexShrink: 0, background: C.blue, color: "#fff", border: "none",
+          borderRadius: sz.radius, padding: "0 16px",
           fontWeight: 700, fontSize: sz.base,
           opacity: (!input.trim() || loading) ? 0.45 : 1, cursor: "pointer",
         }}>
@@ -283,34 +285,34 @@ export default function App() {
     <ThemeContext.Provider value={{ dark, C }}>
       <SizeContext.Provider value={sz}>
         <div style={{
-          fontFamily: "'Georgia', serif", minHeight: "100vh",
+          fontFamily: "'Georgia', serif", height: "100dvh",
           maxWidth: 430, margin: "0 auto", background: C.bg,
-          display: "flex", flexDirection: "column",
+          display: "flex", flexDirection: "column", overflow: "hidden",
         }}>
           {/* Header */}
-          <div style={{ background: C.blue, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ background: C.blue, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
             <div>
-              <h1 style={{ margin: 0, fontSize: sz.title, color: "#fff", fontWeight: 800, letterSpacing: "-0.01em" }}>EasyFix</h1>
-              <div style={{ fontSize: sz.base - 4, color: "rgba(255,255,255,0.65)", marginTop: 2 }}>Simple tech answers</div>
+              <h1 style={{ margin: 0, fontSize: Math.min(sz.title, 24), color: "#fff", fontWeight: 800, letterSpacing: "-0.01em" }}>EasyFix</h1>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", marginTop: 1 }}>Simple tech answers</div>
             </div>
             <button onClick={() => setShowInstallModal(true)} style={{
               background: "rgba(255,255,255,0.15)", border: "1.5px solid rgba(255,255,255,0.35)",
-              color: "#fff", padding: "7px 14px", borderRadius: 8,
-              fontWeight: 600, fontSize: sz.base - 3, cursor: "pointer",
+              color: "#fff", padding: "6px 12px", borderRadius: 8,
+              fontWeight: 600, fontSize: 12, cursor: "pointer", flexShrink: 0,
             }}>
               Install
             </button>
           </div>
 
           {/* Tabs */}
-          <div style={{ display: "flex", background: C.surface, borderBottom: `1px solid ${C.border}` }}>
+          <div style={{ display: "flex", background: C.surface, borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
             {["help", "settings"].map(t => (
               <button key={t} onClick={() => setTab(t)} style={{
-                flex: 1, padding: "13px", background: "none", border: "none",
+                flex: 1, padding: "11px", background: "none", border: "none",
                 borderBottom: tab === t ? `2px solid ${C.blue}` : "2px solid transparent",
                 color: tab === t ? C.blue : C.muted,
                 fontWeight: tab === t ? 700 : 500,
-                fontSize: sz.base - 2, cursor: "pointer", textTransform: "capitalize",
+                fontSize: Math.min(sz.base - 1, 15), cursor: "pointer", textTransform: "capitalize",
               }}>
                 {t === "help" ? "Get Help" : "Settings"}
               </button>
