@@ -264,9 +264,17 @@ export default function App() {
   const [tab, setTab] = useState("help");
   const [sizeIdx, setSizeIdx] = useState(() => parseInt(localStorage.getItem("sg_size") || "1"));
   const [showInstallModal, setShowInstallModal] = useState(false);
+  const [showSizePicker, setShowSizePicker] = useState(() => !sessionStorage.getItem("sg_size_set"));
+  const [pendingSizeIdx, setPendingSizeIdx] = useState(() => parseInt(localStorage.getItem("sg_size") || "1"));
   const isIOS = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
 
   useEffect(() => { localStorage.setItem("sg_size", sizeIdx); }, [sizeIdx]);
+
+  function confirmSize() {
+    setSizeIdx(pendingSizeIdx);
+    setShowSizePicker(false);
+    sessionStorage.setItem("sg_size_set", "1");
+  }
 
   const sz = SIZE_PRESETS[sizeIdx];
 
@@ -322,6 +330,62 @@ export default function App() {
         </div>
 
         {tab === "help" ? <HelpTab /> : <SettingsTab sizeIdx={sizeIdx} setSizeIdx={setSizeIdx} />}
+
+        {/* First-launch Size Picker Modal */}
+        {showSizePicker && (
+          <div style={{
+            position: "fixed", inset: 0, background: "rgba(15,23,42,0.65)",
+            zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24,
+          }}>
+            <div style={{ background: C.white, borderRadius: 18, padding: 28, maxWidth: 340, width: "100%" }}>
+              <h2 style={{ margin: "0 0 6px", fontSize: SIZE_PRESETS[pendingSizeIdx].heading, color: C.blue, fontWeight: 800 }}>
+                Welcome to EasyFix
+              </h2>
+              <p style={{ fontSize: SIZE_PRESETS[pendingSizeIdx].base, color: C.textMid, marginBottom: 20, lineHeight: 1.5 }}>
+                First, pick a text size that's easy for you to read.
+              </p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+                {SIZE_PRESETS.map((p, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPendingSizeIdx(i)}
+                    style={{
+                      padding: "14px 16px",
+                      borderRadius: 12,
+                      border: `2px solid ${pendingSizeIdx === i ? C.blue : C.border}`,
+                      background: pendingSizeIdx === i ? C.blueFaint : C.white,
+                      color: pendingSizeIdx === i ? C.blue : C.text,
+                      fontSize: p.base,
+                      fontWeight: pendingSizeIdx === i ? 700 : 400,
+                      cursor: "pointer",
+                      textAlign: "left",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {p.label}
+                    {pendingSizeIdx === i && <span style={{ fontSize: p.base - 2 }}>✓</span>}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={confirmSize}
+                style={{
+                  width: "100%", padding: "14px",
+                  background: C.blue, color: C.white,
+                  border: "none", borderRadius: 12,
+                  fontSize: SIZE_PRESETS[pendingSizeIdx].base,
+                  fontWeight: 700, cursor: "pointer",
+                }}
+              >
+                Looks good — let's go!
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Install Modal */}
         {showInstallModal && (
